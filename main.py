@@ -177,3 +177,39 @@ def get_grape(grape_id: int, db: sqlite3.Connection = Depends(get_db)):
         "message": "Success",
         "grape": grape_data
     }
+
+@app.get("/grapes", response_model=GrapesResponse)
+def get_grapes_list(page: int = 1, size: int = 10, db: sqlite3.Connection = Depends(get_db)):
+    if page < 1:
+        page = 1
+    if size < 1:
+        size = 10
+        
+    offset = (page - 1) * size
+    
+    try:
+        cursor = db.execute(
+            "SELECT id, root, raw FROM grapes ORDER BY id DESC LIMIT ? OFFSET ?", 
+            (size, offset)
+        )
+        rows = cursor.fetchall()
+        
+        grapes_list = []
+        for row in rows:
+            grapes_list.append({
+                "id": row["id"],
+                "root": json.loads(row["root"]),
+                "raw": row["raw"]
+            })
+            
+        return {
+            "ok": True,
+            "message": f"Success",
+            "grapes": grapes_list
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Database Error: {str(e)}"
+        )
