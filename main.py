@@ -52,6 +52,12 @@ class GrapeResponse(StandardResponse):
 class GrapesResponse(StandardResponse):
     grapes: List[Grape]
 
+<<<<<<< HEAD
+=======
+PAGE_SIZE = 5
+
+
+>>>>>>> 799780a (Add grape pagination size)
 @app.post("/grapes", response_model=StandardResponse)
 def create_grape(grape_in: List[Node], db: sqlite3.Connection = Depends(get_db)):
     raw_str = "ㅗ"
