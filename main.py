@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request, R
 from fastapi.security import HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import List, Optional, Any
+from typing import List, Optional, NewType
 from datetime import datetime, timedelta
 import jwt
 import json
@@ -95,14 +95,20 @@ class GrapeMeta(BaseModel):
     name: str
     description: str
 
+class NodeId(int):
+    pass
+
 class Node(BaseModel):
-    id: int
+    id: NodeId
     name: str
     sans: List[List[str]]
     next: Optional[int] = None
 
+class GrapeId(int):
+    pass
+
 class Grape(BaseModel):
-    id: int
+    id: GrapeId
     meta: GrapeMeta
     nodes: List[Node]
     raw: str
