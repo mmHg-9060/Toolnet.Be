@@ -195,6 +195,15 @@ PAGE_SIZE = 10
 
 @app.post("/grapes", response_model=StandardResponse)
 def create_grape(req: GrapeCreateRequest, db: sqlite3.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+    
+    for node in req.nodes:
+        for s in node.sans:
+            if len(s) != 2:
+                raise HTTPException(
+                    status_code=422, 
+                    detail=f"Unprocessable Entity: 노드 '{node.name}'의 sans 데이터는 반드시 2개의 원소를 가져야 합니다."
+                )
+
     meta_json = req.meta.model_dump_json()
     nodes_json = json.dumps([node.model_dump() for node in req.nodes])
 
